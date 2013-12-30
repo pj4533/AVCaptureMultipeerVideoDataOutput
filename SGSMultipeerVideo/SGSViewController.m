@@ -84,8 +84,8 @@
         if ([self.captureSession canAddOutput:videoDataOutput]) {
             
             if ([videoDevice lockForConfiguration:nil]) {
-                videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1,2);
-                videoDevice.activeVideoMinFrameDuration = CMTimeMake(1,2);
+                videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1,5);
+                videoDevice.activeVideoMinFrameDuration = CMTimeMake(1,5);
                 [videoDevice unlockForConfiguration];
             }
             
