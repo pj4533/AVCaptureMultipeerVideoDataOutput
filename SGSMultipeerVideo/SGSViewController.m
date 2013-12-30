@@ -12,13 +12,11 @@
 #import <malloc/malloc.h>
 #import <MultipeerConnectivity/MultipeerConnectivity.h>
 
-@interface SGSViewController () <AVCaptureVideoDataOutputSampleBufferDelegate,MCAdvertiserAssistantDelegate, MCSessionDelegate,NSStreamDelegate> {
+@interface SGSViewController () <AVCaptureVideoDataOutputSampleBufferDelegate,MCAdvertiserAssistantDelegate, MCSessionDelegate> {
     MCPeerID *_myDevicePeerId;
     MCSession *_session;
     MCAdvertiserAssistant *_advertiserAssistant;
     NSString* _displayName;
-    
-    NSOutputStream* _outputStream;
 }
 
 @property (weak, nonatomic) IBOutlet SGSPreviewView *previewView;
@@ -53,7 +51,7 @@
 
 	// Create the AVCaptureSession
     self.captureSession = [[AVCaptureSession alloc] init];
-	
+
 	// Setup the preview view
     self.previewView.session = self.captureSession;
 	
@@ -84,10 +82,19 @@
 				
         AVCaptureVideoDataOutput *videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
         if ([self.captureSession canAddOutput:videoDataOutput]) {
+            
+            if ([videoDevice lockForConfiguration:nil]) {
+                videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1,2);
+                videoDevice.activeVideoMinFrameDuration = CMTimeMake(1,2);
+                [videoDevice unlockForConfiguration];
+            }
+            
+
             [self.captureSession addOutput:videoDataOutput];
             self.videoDataOutput = videoDataOutput;
             [self.videoDataOutput setVideoSettings:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA] forKey:(NSString*)kCVPixelBufferPixelFormatTypeKey]];
             [self.videoDataOutput setSampleBufferDelegate:self queue:self.sessionQueue];
+            
         }
 	});
 }
@@ -105,67 +112,60 @@
     // Dispose of any resources that can be recreated.
 }
 
+// Create a UIImage from sample buffer data
 - (UIImage *) imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
 {
+    // Get a CMSampleBuffer's Core Video image buffer for the media data
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    
+    // Lock the base address of the pixel buffer
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
     
-    size_t width = CVPixelBufferGetWidth(imageBuffer);
-    size_t height = CVPixelBufferGetHeight(imageBuffer);
-    size_t bytesPerRow = width * 4;
-    
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
+    // Get the number of bytes per row for the pixel buffer
     void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
     
-    CGContextRef context = CGBitmapContextCreate(
-                                                 baseAddress,
-                                                 width,
-                                                 height,
-                                                 8,
-                                                 bytesPerRow,
-                                                 colorSpace,
-                                                 kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little
-                                                 );
+    // Get the number of bytes per row for the pixel buffer
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
+    // Get the pixel buffer width and height
+    size_t width = CVPixelBufferGetWidth(imageBuffer);
+    size_t height = CVPixelBufferGetHeight(imageBuffer);
     
-    CGImageRef quartzImage = CGBitmapContextCreateImage(context);
+    // Create a device-dependent RGB color space
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     
-    UIImage *image = [UIImage imageWithCGImage:quartzImage];
-    CGImageRelease(quartzImage);
+    // Create a bitmap graphics context with the sample buffer data
+    CGContextRef context1 = CGBitmapContextCreate(baseAddress, width, height, 8,
+                                                  bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+    
+    // Create a Quartz image from the pixel data in the bitmap graphics context
+    CGImageRef quartzImage = CGBitmapContextCreateImage(context1);
+    // Unlock the pixel buffer
+    CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+    
+    // Free up the context and color space
+    CGContextRelease(context1);
     CGColorSpaceRelease(colorSpace);
-    CGContextRelease(context);
-    CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
     
-    return image;
+    // Create an image object from the Quartz image
+    //I modified this line: [UIImage imageWithCGImage:quartzImage]; to the following to correct the orientation:
+    UIImage *image =  [UIImage imageWithCGImage:quartzImage scale:1.0 orientation:UIImageOrientationRight];
+    
+    // Release the Quartz image
+    CGImageRelease(quartzImage);
+    
+    return (image);
 }
+
 
 #pragma mark - AVCaptureVideoDataOutputSampleBufferDelegate
 
 - (void) captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
 
-    // maybe try back to non streaming?
-    if(_outputStream && [_outputStream hasSpaceAvailable]) {
+    if (_session.connectedPeers.count) {
         UIImage* image = [self imageFromSampleBuffer:sampleBuffer];
         NSData *data = UIImageJPEGRepresentation(image, 0.2);
-
         
-        NSInteger bytesWritten = [_outputStream write:data.bytes maxLength:data.length];
-        
-        if(bytesWritten < 0)
-            NSLog(@"Failed to write message");
-        
+        [_session sendData:data toPeers:_session.connectedPeers withMode:MCSessionSendDataReliable error:nil];
     }
-    
-//    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-//    NSData* sampleBufferData = [[NSData alloc] initWithBytes:imageBuffer length:malloc_size(imageBuffer)];
-//
-//    NSLog(@"Sent: %ld", malloc_size(imageBuffer));
-//    
-//    
-//    [_session sendData:sampleBufferData toPeers:_session.connectedPeers withMode:MCSessionSendDataReliable error:nil];
-    
-    
 }
 
 
@@ -217,11 +217,6 @@
 	switch (state) {
 		case MCSessionStateConnected:
             NSLog(@"PEER CONNECTED: %@", peerID.displayName);
-            _outputStream = [_session startStreamWithName:@"videostream" toPeer:peerID error:nil];
-            [_outputStream setDelegate:self];
-            [_outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop]
-                               forMode:NSDefaultRunLoopMode];
-            [_outputStream open];
 			break;
 		case MCSessionStateConnecting:
             NSLog(@"PEER CONNECTING: %@", peerID.displayName);
@@ -244,10 +239,4 @@
 - (void)session:(MCSession *)session didFinishReceivingResourceWithName:(NSString *)resourceName fromPeer:(MCPeerID *)peerID atURL:(NSURL *)localURL withError:(NSError *)error {
 }
 
-#pragma mark - NSStreamDelegate
-
-- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode {
-
-    
-}
 @end
