@@ -23,6 +23,7 @@
 		0A08863918708AA1005D8BE6 /* SGSMultipeerVideoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A08863818708AA1005D8BE6 /* SGSMultipeerVideoTests.m */; };
 		0A0886461870907C005D8BE6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0886451870907C005D8BE6 /* AVFoundation.framework */; };
 		0A088648187096FB005D8BE6 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A088647187096FB005D8BE6 /* MultipeerConnectivity.framework */; };
+		0A2BFD4B1872015D0012B1D5 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A2BFD4A1872015D0012B1D5 /* CoreImage.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		0A08863818708AA1005D8BE6 /* SGSMultipeerVideoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SGSMultipeerVideoTests.m; sourceTree = "<group>"; };
 		0A0886451870907C005D8BE6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		0A088647187096FB005D8BE6 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
+		0A2BFD4A1872015D0012B1D5 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A2BFD4B1872015D0012B1D5 /* CoreImage.framework in Frameworks */,
 				0A088648187096FB005D8BE6 /* MultipeerConnectivity.framework in Frameworks */,
 				0A0886461870907C005D8BE6 /* AVFoundation.framework in Frameworks */,
 				0A08861018708AA1005D8BE6 /* CoreGraphics.framework in Frameworks */,
@@ -107,6 +110,7 @@
 		0A08860C18708AA1005D8BE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0A2BFD4A1872015D0012B1D5 /* CoreImage.framework */,
 				0A088647187096FB005D8BE6 /* MultipeerConnectivity.framework */,
 				0A0886451870907C005D8BE6 /* AVFoundation.framework */,
 				0A08860D18708AA1005D8BE6 /* Foundation.framework */,
