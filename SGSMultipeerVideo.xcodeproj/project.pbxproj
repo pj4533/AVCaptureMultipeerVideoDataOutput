@@ -21,7 +21,6 @@
 		0A08862F18708AA1005D8BE6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A08861118708AA1005D8BE6 /* UIKit.framework */; };
 		0A08863718708AA1005D8BE6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A08863518708AA1005D8BE6 /* InfoPlist.strings */; };
 		0A08863918708AA1005D8BE6 /* SGSMultipeerVideoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A08863818708AA1005D8BE6 /* SGSMultipeerVideoTests.m */; };
-		0A08864418708F4F005D8BE6 /* SGSPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A08864318708F4F005D8BE6 /* SGSPreviewView.m */; };
 		0A0886461870907C005D8BE6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0886451870907C005D8BE6 /* AVFoundation.framework */; };
 		0A088648187096FB005D8BE6 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A088647187096FB005D8BE6 /* MultipeerConnectivity.framework */; };
 /* End PBXBuildFile section */
@@ -56,8 +55,6 @@
 		0A08863418708AA1005D8BE6 /* SGSMultipeerVideoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SGSMultipeerVideoTests-Info.plist"; sourceTree = "<group>"; };
 		0A08863618708AA1005D8BE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0A08863818708AA1005D8BE6 /* SGSMultipeerVideoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SGSMultipeerVideoTests.m; sourceTree = "<group>"; };
-		0A08864218708F4F005D8BE6 /* SGSPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGSPreviewView.h; sourceTree = "<group>"; };
-		0A08864318708F4F005D8BE6 /* SGSPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGSPreviewView.m; sourceTree = "<group>"; };
 		0A0886451870907C005D8BE6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		0A088647187096FB005D8BE6 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -130,8 +127,6 @@
 				0A08862318708AA1005D8BE6 /* SGSViewController.m */,
 				0A08862518708AA1005D8BE6 /* Images.xcassets */,
 				0A08861418708AA1005D8BE6 /* Supporting Files */,
-				0A08864218708F4F005D8BE6 /* SGSPreviewView.h */,
-				0A08864318708F4F005D8BE6 /* SGSPreviewView.m */,
 			);
 			path = SGSMultipeerVideo;
 			sourceTree = "<group>";
@@ -264,7 +259,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A08862418708AA1005D8BE6 /* SGSViewController.m in Sources */,
-				0A08864418708F4F005D8BE6 /* SGSPreviewView.m in Sources */,
 				0A08861E18708AA1005D8BE6 /* SGSAppDelegate.m in Sources */,
 				0A08861A18708AA1005D8BE6 /* main.m in Sources */,
 			);
@@ -477,6 +471,7 @@
 				0A08863E18708AA1005D8BE6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0A08863F18708AA1005D8BE6 /* Build configuration list for PBXNativeTarget "SGSMultipeerVideoTests" */ = {
 			isa = XCConfigurationList;
@@ -485,6 +480,7 @@
 				0A08864118708AA1005D8BE6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

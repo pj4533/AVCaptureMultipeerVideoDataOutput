@@ -7,7 +7,6 @@
 //
 
 #import "SGSViewController.h"
-#import "SGSPreviewView.h"
 #import <AVFoundation/AVFoundation.h>
 #import <malloc/malloc.h>
 #import <MultipeerConnectivity/MultipeerConnectivity.h>
@@ -19,7 +18,7 @@
     NSString* _displayName;
 }
 
-@property (weak, nonatomic) IBOutlet SGSPreviewView *previewView;
+@property (weak, nonatomic) IBOutlet UIView *previewView;
 
 // Session management.
 @property (nonatomic) dispatch_queue_t sessionQueue; // Communicate with the session and other session objects on this queue.
@@ -53,8 +52,11 @@
     self.captureSession = [[AVCaptureSession alloc] init];
 
 	// Setup the preview view
-    self.previewView.session = self.captureSession;
-	
+    AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+    captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    captureVideoPreviewLayer.frame = CGRectMake(0,0, 300, 300);
+    [self.previewView.layer addSublayer:captureVideoPreviewLayer];
+    
 	// Check for device authorization
 	[self checkDeviceAuthorizationStatus];
 	
@@ -84,11 +86,12 @@
         if ([self.captureSession canAddOutput:videoDataOutput]) {
             
             if ([videoDevice lockForConfiguration:nil]) {
-                videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1,5);
-                videoDevice.activeVideoMinFrameDuration = CMTimeMake(1,5);
+                videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1,10);
+                videoDevice.activeVideoMinFrameDuration = CMTimeMake(1,10);
                 [videoDevice unlockForConfiguration];
             }
             
+            videoDataOutput.alwaysDiscardsLateVideoFrames = YES;
 
             [self.captureSession addOutput:videoDataOutput];
             self.videoDataOutput = videoDataOutput;
@@ -110,6 +113,51 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+//- (UIImage *)cropImage:(UIImage*) image withRect:(CGRect)rect {
+//    if (image.scale > 1.0f) {
+//        rect = CGRectMake(rect.origin.x * image.scale,
+//                          rect.origin.y * image.scale,
+//                          rect.size.width * image.scale,
+//                          rect.size.height * image.scale);
+//    }
+//    
+//    CGImageRef imageRef = CGImageCreateWithImageInRect(image.CGImage, rect);
+//    UIImage *result = [UIImage imageWithCGImage:imageRef scale:image.scale orientation:image.imageOrientation];
+//    CGImageRelease(imageRef);
+//    return result;
+//}
+
+- (UIImage *)imageByCropping:(UIImage *)image toSize:(CGSize)size
+{
+    double x = (image.size.width - size.width) / 2.0;
+    double y = (image.size.height - size.height) / 2.0;
+    
+    CGRect cropRect = CGRectMake(x, y, size.height, size.width);
+    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);
+    
+    UIImage *cropped =  [UIImage imageWithCGImage:imageRef scale:image.scale orientation:UIImageOrientationRight];
+
+    CGImageRelease(imageRef);
+    
+    return cropped;
+}
+
++ (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+        if ([[UIScreen mainScreen] scale] == 2.0) {
+            UIGraphicsBeginImageContextWithOptions(newSize, YES, 2.0);
+        } else {
+            UIGraphicsBeginImageContext(newSize);
+        }
+    } else {
+        UIGraphicsBeginImageContext(newSize);
+    }
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 // Create a UIImage from sample buffer data
@@ -147,12 +195,12 @@
     
     // Create an image object from the Quartz image
     //I modified this line: [UIImage imageWithCGImage:quartzImage]; to the following to correct the orientation:
-    UIImage *image =  [UIImage imageWithCGImage:quartzImage scale:1.0 orientation:UIImageOrientationRight];
+    UIImage *image =  [UIImage imageWithCGImage:quartzImage scale:[[UIScreen mainScreen] scale] orientation:UIImageOrientationRight];
     
     // Release the Quartz image
     CGImageRelease(quartzImage);
     
-    return (image);
+    return [self imageByCropping:image toSize:CGSizeMake(300.0, 300.0)];
 }
 
 
