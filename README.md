@@ -3,6 +3,7 @@ SGSMultipeerVideo
 
 Works sending one stream of video to [SGSMultipeerVideoMixer](https://github.com/pj4533/SGSMultipeerVideoMixer)
 
+In progress...but a fun example.
 
 ## To Do
 
