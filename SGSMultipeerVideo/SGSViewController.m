@@ -60,11 +60,8 @@
     [self.captureSession addInput:videoDeviceInput];
     
     AVCaptureVideoDataOutput *videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
-    if ([videoDevice lockForConfiguration:nil]) {
-        videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1,10);
-        videoDevice.activeVideoMinFrameDuration = CMTimeMake(1,10);
-        [videoDevice unlockForConfiguration];
-    }
+    [self setFrameRate:5 onDevice:videoDevice];
+    
 
     self.sampleQueue = dispatch_queue_create("VideoSampleQueue", DISPATCH_QUEUE_SERIAL);
     [videoDataOutput setSampleBufferDelegate:self queue:self.sampleQueue];
@@ -85,17 +82,50 @@
     return image;
 }
 
+- (void) lowerFramerate {
+    AVCaptureDeviceInput* deviceInput = self.captureSession.inputs[0];
+    CMTime frameDuration = deviceInput.device.activeVideoMaxFrameDuration;
+    [self setFrameRate:frameDuration.timescale-1 onDevice:deviceInput.device];
+}
+
+- (void) raiseFramerate {
+    AVCaptureDeviceInput* deviceInput = self.captureSession.inputs[0];
+    CMTime frameDuration = deviceInput.device.activeVideoMaxFrameDuration;
+    [self setFrameRate:frameDuration.timescale+1 onDevice:deviceInput.device];
+}
+
+- (void) setFrameRate:(NSInteger) framerate onDevice:(AVCaptureDevice*) videoDevice {
+    if ([videoDevice lockForConfiguration:nil]) {
+        videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1,framerate);
+        videoDevice.activeVideoMinFrameDuration = CMTimeMake(1,framerate);
+        [videoDevice unlockForConfiguration];
+    }
+}
+
 #pragma mark - AVCaptureVideoDataOutputSampleBufferDelegate
 
 - (void) captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
 
     if (_session.connectedPeers.count) {
+        NSNumber* timestamp = @(CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)));
+        
         CVImageBufferRef cvImage = CMSampleBufferGetImageBuffer(sampleBuffer);
         CGRect cropRect = AVMakeRectWithAspectRatioInsideRect(CGSizeMake(320, 320), CGRectMake(0,0, CVPixelBufferGetWidth(cvImage),CVPixelBufferGetHeight(cvImage)) );
         CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:cvImage];
         CIImage* croppedImage = [ciImage imageByCroppingToRect:cropRect];
         
-        NSData *data = UIImageJPEGRepresentation([self cgImageBackedImageWithCIImage:croppedImage], 0.2);
+        NSData *imageData = UIImageJPEGRepresentation([self cgImageBackedImageWithCIImage:croppedImage], 0.2);
+        
+        AVCaptureDeviceInput* deviceInput = self.captureSession.inputs[0];
+        CMTime frameDuration = deviceInput.device.activeVideoMaxFrameDuration;
+        NSDictionary* dict = @{
+                               @"image": imageData,
+                               @"timestamp" : timestamp,
+                               @"framesPerSecond": @(frameDuration.timescale)
+                               };
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:dict];
+
+        
         [_session sendData:data toPeers:_session.connectedPeers withMode:MCSessionSendDataReliable error:nil];
     }
 }
@@ -118,6 +148,12 @@
 }
 
 - (void)session:(MCSession *)session didReceiveData:(NSData *)data fromPeer:(MCPeerID *)peerID {
+    NSString* commandString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if ([commandString isEqualToString:@"raiseFramerate"]) {
+        [self raiseFramerate];
+    } else if ([commandString isEqualToString:@"lowerFramerate"]) {
+        [self lowerFramerate];
+    }
 }
 
 - (void)session:(MCSession *)session didReceiveStream:(NSInputStream *)stream withName:(NSString *)streamName fromPeer:(MCPeerID *)peerID {
