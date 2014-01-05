@@ -39,7 +39,13 @@ Uses cocoapods, so just add to your Podfile
 
 ```pod "AVCaptureMultipeerVideoDataOutput"```
 
-See the Sample project for an example implementation.
+See the Sample project for an example implementation.  To run the sample:
+
+```
+pod install
+```
+
+Then open 'MultipeerVideoOutputSample.xcworkspace'
 
 ## To Do
 
