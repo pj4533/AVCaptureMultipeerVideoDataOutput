@@ -23,6 +23,7 @@
 		0A08863918708AA1005D8BE6 /* SGSMultipeerVideoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A08863818708AA1005D8BE6 /* SGSMultipeerVideoTests.m */; };
 		0A0886461870907C005D8BE6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0886451870907C005D8BE6 /* AVFoundation.framework */; };
 		0A088648187096FB005D8BE6 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A088647187096FB005D8BE6 /* MultipeerConnectivity.framework */; };
+		0A1E3FCB1879ABCC008AF119 /* AVCaptureMultipeerVideoDataOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1E3FCA1879ABCC008AF119 /* AVCaptureMultipeerVideoDataOutput.m */; };
 		0A2BFD4B1872015D0012B1D5 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A2BFD4A1872015D0012B1D5 /* CoreImage.framework */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +59,8 @@
 		0A08863818708AA1005D8BE6 /* SGSMultipeerVideoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SGSMultipeerVideoTests.m; sourceTree = "<group>"; };
 		0A0886451870907C005D8BE6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		0A088647187096FB005D8BE6 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
+		0A1E3FC91879ABCC008AF119 /* AVCaptureMultipeerVideoDataOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCaptureMultipeerVideoDataOutput.h; sourceTree = "<group>"; };
+		0A1E3FCA1879ABCC008AF119 /* AVCaptureMultipeerVideoDataOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCaptureMultipeerVideoDataOutput.m; sourceTree = "<group>"; };
 		0A2BFD4A1872015D0012B1D5 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -124,6 +127,8 @@
 		0A08861318708AA1005D8BE6 /* SGSMultipeerVideo */ = {
 			isa = PBXGroup;
 			children = (
+				0A1E3FC91879ABCC008AF119 /* AVCaptureMultipeerVideoDataOutput.h */,
+				0A1E3FCA1879ABCC008AF119 /* AVCaptureMultipeerVideoDataOutput.m */,
 				0A08861C18708AA1005D8BE6 /* SGSAppDelegate.h */,
 				0A08861D18708AA1005D8BE6 /* SGSAppDelegate.m */,
 				0A08861F18708AA1005D8BE6 /* Main.storyboard */,
@@ -264,6 +269,7 @@
 			files = (
 				0A08862418708AA1005D8BE6 /* SGSViewController.m in Sources */,
 				0A08861E18708AA1005D8BE6 /* SGSAppDelegate.m in Sources */,
+				0A1E3FCB1879ABCC008AF119 /* AVCaptureMultipeerVideoDataOutput.m in Sources */,
 				0A08861A18708AA1005D8BE6 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
