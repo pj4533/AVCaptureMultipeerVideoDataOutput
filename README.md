@@ -31,7 +31,7 @@ Multipeer connection stuff is abstracted inside an AVCaptureVideoDataOutput subc
     [self.captureSession startRunning];
 ```
 
-Thats it!  Look in the AVCaptureMultipeerVideoDataOutput class for details on how is sends the data.  (The data sent ends up being a fairly low quality JPEG).
+Thats it!  Look in the AVCaptureMultipeerVideoDataOutput class for details on how it sends the data.  (The data sent ends up being a fairly low quality JPEG).
 
 ## To Do
 
