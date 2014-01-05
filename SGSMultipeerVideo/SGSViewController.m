@@ -35,14 +35,14 @@
     captureVideoPreviewLayer.frame = CGRectMake(0,0, 320, 320);
     [self.previewView.layer addSublayer:captureVideoPreviewLayer];
 
+    // Create video device input
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    
     AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:nil];
     [self.captureSession addInput:videoDeviceInput];
     
     
+    // Create output
     AVCaptureMultipeerVideoDataOutput *multipeerVideoOutput = [[AVCaptureMultipeerVideoDataOutput alloc] initWithDisplayName:[[UIDevice currentDevice] name]];
-    
     [self.captureSession addOutput:multipeerVideoOutput];
     
     [self setFrameRate:15 onDevice:videoDevice];
