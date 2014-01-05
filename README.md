@@ -1,4 +1,4 @@
-SGSMultipeerVideo
+AVCaptureMultipeerVideoDataOutput
 =================
 
 Advertises one stream of video over a multipeer connection.
@@ -33,6 +33,14 @@ Multipeer connection stuff is abstracted inside an AVCaptureVideoDataOutput subc
 
 Thats it!  Look in the AVCaptureMultipeerVideoDataOutput class for details on how it sends the data.  (The data sent ends up being a fairly low quality JPEG).
 
+## Setup
+
+Uses cocoapods, so just add to your Podfile
+
+```pod "AVCaptureMultipeerVideoDataOutput"```
+
+See the Sample project for an example implementation.
+
 ## To Do
 
 * Expose more of the output format variables
@@ -47,4 +55,4 @@ PJ Gray
 
 ## License
 
-SGSMultipeerVideo is available under the MIT license. See the LICENSE file for more info.
+AVCaptureMultipeerVideoDataOutput is available under the MIT license. See the LICENSE file for more info.

@@ -1,0 +1,14 @@
+PODS:
+  - AVCaptureMultipeerVideoDataOutput (0.0.1)
+
+DEPENDENCIES:
+  - AVCaptureMultipeerVideoDataOutput (from `../`)
+
+EXTERNAL SOURCES:
+  AVCaptureMultipeerVideoDataOutput:
+    :path: ../
+
+SPEC CHECKSUMS:
+  AVCaptureMultipeerVideoDataOutput: 00d263f6450012683bd5554bb56fe2e317ac56ad
+
+COCOAPODS: 0.28.0
