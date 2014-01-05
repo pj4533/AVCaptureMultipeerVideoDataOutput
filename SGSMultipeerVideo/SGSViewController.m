@@ -60,7 +60,7 @@
     [self.captureSession addInput:videoDeviceInput];
     
     AVCaptureVideoDataOutput *videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
-    [self setFrameRate:5 onDevice:videoDevice];
+    [self setFrameRate:15 onDevice:videoDevice];
     
 
     self.sampleQueue = dispatch_queue_create("VideoSampleQueue", DISPATCH_QUEUE_SERIAL);
@@ -114,7 +114,14 @@
         CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:cvImage];
         CIImage* croppedImage = [ciImage imageByCroppingToRect:cropRect];
         
-        NSData *imageData = UIImageJPEGRepresentation([self cgImageBackedImageWithCIImage:croppedImage], 0.2);
+        CIFilter *scaleFilter = [CIFilter filterWithName:@"CILanczosScaleTransform"];
+        [scaleFilter setValue:croppedImage forKey:@"inputImage"];
+        [scaleFilter setValue:[NSNumber numberWithFloat:0.25] forKey:@"inputScale"];
+        [scaleFilter setValue:[NSNumber numberWithFloat:1.0] forKey:@"inputAspectRatio"];
+        CIImage *finalImage = [scaleFilter valueForKey:@"outputImage"];
+        UIImage* cgBackedImage = [self cgImageBackedImageWithCIImage:finalImage];
+        
+        NSData *imageData = UIImageJPEGRepresentation(cgBackedImage, 0.2);
         
         AVCaptureDeviceInput* deviceInput = self.captureSession.inputs[0];
         CMTime frameDuration = deviceInput.device.activeVideoMaxFrameDuration;
