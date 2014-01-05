@@ -31,7 +31,7 @@ AVCaptureMultipeerVideoDataOutput *multipeerVideoOutput = [[AVCaptureMultipeerVi
 [self.captureSession startRunning];
 ```
 
-Thats it!  Look in the AVCaptureMultipeerVideoDataOutput class for details on how it sends the data.  (The data sent ends up being a fairly low quality JPEG).
+Thats it!  Look in the AVCaptureMultipeerVideoDataOutput class for more details on the format & size of the image sent.  The NSData that gets sent over the wire is described below.
 
 ### Peer Setup
 
