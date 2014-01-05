@@ -9,7 +9,7 @@ Use [SGSMultipeerVideoMixer](https://github.com/pj4533/SGSMultipeerVideoMixer) f
 
 Multipeer connection stuff is abstracted inside an AVCaptureVideoDataOutput subclass so setup is easy using the normal AV pipeline:
 
-```objc
+```objective-c
 	// Create the AVCaptureSession
     self.captureSession = [[AVCaptureSession alloc] init];
 
