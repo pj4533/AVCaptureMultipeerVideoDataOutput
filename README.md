@@ -81,6 +81,7 @@ Then open 'MultipeerVideoOutputSample.xcworkspace'
 ## To Do
 
 * Expose more of the output format variables
+* Implement the no-UI multipeer connectivity classes
 
 ## Contact
 
