@@ -41,7 +41,7 @@
         [_captureSession addInput:videoDeviceInput];
         
         // Create output
-        AVCaptureMultipeerVideoDataOutput *multipeerVideoOutput = [[AVCaptureMultipeerVideoDataOutput alloc] initWithDisplayName:[[UIDevice currentDevice] name]];
+        AVCaptureMultipeerVideoDataOutput *multipeerVideoOutput = [[AVCaptureMultipeerVideoDataOutput alloc] initWithDisplayName:[[UIDevice currentDevice] name] withAssistant:NO];
         [_captureSession addOutput:multipeerVideoOutput];
         
         [self setFrameRate:15 onDevice:videoDevice];

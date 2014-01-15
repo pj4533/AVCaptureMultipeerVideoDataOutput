@@ -24,13 +24,14 @@
 #import "AVCaptureMultipeerVideoDataOutput.h"
 #import <MultipeerConnectivity/MultipeerConnectivity.h>
 
-@interface AVCaptureMultipeerVideoDataOutput () <AVCaptureVideoDataOutputSampleBufferDelegate,MCAdvertiserAssistantDelegate, MCSessionDelegate> {
+@interface AVCaptureMultipeerVideoDataOutput () <AVCaptureVideoDataOutputSampleBufferDelegate,MCAdvertiserAssistantDelegate, MCSessionDelegate,MCNearbyServiceAdvertiserDelegate> {
     dispatch_queue_t _sampleQueue;
     
-    // Multipeer stuff - using assistant for now
+    // Multipeer stuff - assistant is optional
     MCPeerID *_myDevicePeerId;
     MCSession *_session;
     MCAdvertiserAssistant *_advertiserAssistant;
+    MCNearbyServiceAdvertiser *_nearbyAdvertiser;
 }
 
 @end
@@ -38,6 +39,10 @@
 @implementation AVCaptureMultipeerVideoDataOutput
 
 - (instancetype) initWithDisplayName:(NSString*) displayName {
+    return [self initWithDisplayName:displayName withAssistant:YES];
+}
+
+- (instancetype) initWithDisplayName:(NSString*) displayName withAssistant:(BOOL) useAssistant {
     self = [super init];
     if (self) {
         _myDevicePeerId = [[MCPeerID alloc] initWithDisplayName:displayName];
@@ -45,8 +50,16 @@
         _session = [[MCSession alloc] initWithPeer:_myDevicePeerId securityIdentity:nil encryptionPreference:MCEncryptionNone];
         _session.delegate = self;
         
-        _advertiserAssistant = [[MCAdvertiserAssistant alloc] initWithServiceType:@"multipeer-video" discoveryInfo:nil session:_session];
-        [_advertiserAssistant start];
+        NSString* serviceType = @"multipeer-video";
+        
+        if (useAssistant) {
+            _advertiserAssistant = [[MCAdvertiserAssistant alloc] initWithServiceType:serviceType discoveryInfo:nil session:_session];
+            [_advertiserAssistant start];
+        } else {
+            _nearbyAdvertiser = [[MCNearbyServiceAdvertiser alloc] initWithPeer:_myDevicePeerId discoveryInfo:nil serviceType:serviceType];
+            _nearbyAdvertiser.delegate = self;
+            [_nearbyAdvertiser startAdvertisingPeer];
+        }
         
         _sampleQueue = dispatch_queue_create("VideoSampleQueue", DISPATCH_QUEUE_SERIAL);
         [self setSampleBufferDelegate:self queue:_sampleQueue];
@@ -102,6 +115,14 @@
     }
 }
 
+#pragma mark - MCNearbyServiceAdvertiserDelegate
+
+- (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID withContext:(NSData *)context invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
+{
+    if (invitationHandler) {
+        invitationHandler(YES, _session);
+    }
+}
 
 #pragma mark - MCSessionDelegate Methods
 

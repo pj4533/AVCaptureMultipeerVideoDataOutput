@@ -34,5 +34,6 @@
 @property (strong, nonatomic) id delegate;
 
 - (instancetype) initWithDisplayName:(NSString*) displayName;
+- (instancetype) initWithDisplayName:(NSString*) displayName withAssistant:(BOOL) useAssistant;
 
 @end
